@@ -1,0 +1,89 @@
+from libc.string cimport memset
+
+cdef class Buffer:
+	"""
+	Provides a interface for wrapping and keeping track of native C buffers
+
+	>>> buf_a = new_buffer(5, types.int8_t)
+	>>> buf_a[0] = 255
+	>>> print buf_a[0]
+	-1
+	>>> buf_b = buffer_from_list(types.float, [1.5, 2.25, 3.75])
+	>>> print buf_b.as_list()
+	[1.5, 2.25, 3.75]
+	"""
+	cdef void init(self, void * buf, size_t length, int type):
+		self.buf = buf
+		self.length = length
+		self.type = type
+		self.is_allocated = False
+	def zero(self):
+		"fills the whole buffer with zeros"
+		memset(self.buf, 0, self.length * (self.type & 0xf))
+	def __getitem__(self, size_t i):
+		v = mod[T(self.type, self.type)].buffer_get_value(self.buf, i)
+		if self.type & 0x20 == 0: return int(v)
+		return v
+	def __setitem__(self, size_t i, double v):
+		mod[T(self.type, self.type)].buffer_set_value(self.buf, i, v)
+#	def __iter__(self):
+#		"generators are currently unsupported by cython"
+#		cdef size_t i
+#		for i in range(self.length):
+#			yield self[i]
+	def as_list(self):
+		"returns a list representation of the whole :class:`Buffer`"
+		ret = []
+		cdef size_t i
+		for i in range(self.length):
+			ret.append(self[i])
+		return ret
+	def __len__(self):
+		return self.length
+	def get_type(self):
+		return self.type
+	def get_addr(self):
+		return <uint64_t> self.buf
+	def __repr__(self):
+		return repr([self[i] for i in xrange(0, self.length)])
+	def __dealloc__(self):
+		if self.is_allocated:
+			free(self.buf)
+
+cdef Buffer _Buffer(void * buf, size_t length, int type):
+	cdef Buffer b = Buffer()
+	b.init(buf, length, type)
+	return b
+
+cdef Buffer _new_buffer(size_t length, int type, void * p=NULL):
+	cdef int alloc = False
+	if p == NULL:
+		p = malloc(length * (type&0xf))
+		alloc = True
+	cdef Buffer b = _Buffer(p, length, type)
+	b.is_allocated = alloc
+	return b
+
+def buffer_from_list(int type, list):
+	"""
+	buffer_from_list(type, list) -> :class:`Buffer`
+
+	allocates a new :class:`Buffer` and fills its values with the ones found in *list*
+	"""
+	b = new_buffer(len(list), type)
+	cdef size_t i
+	for i in range(len(list)):
+		b[i] = list[i]
+	return b
+
+def new_buffer(size_t length, int type, uint64_t ptr=0):
+	"""
+	new_buffer(length, type, ptr=0)
+	allocate a new :class:`Buffer` or generate one from an existing *ptr*
+	"""
+	return _new_buffer(length, type, <void *>ptr)
+
+def free_buffer(Buffer b):
+	"free_buffer(buf) -- explicitly free an allocated :class:`Buffer`. This is usually not needed!"
+	free(b.buf)
+	b.is_allocated = False
