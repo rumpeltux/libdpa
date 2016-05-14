@@ -8,7 +8,7 @@ correlations for profiling or the actual execution of an attack. Processing
 steps can be combined, chainend and executed in parallel by a DPAWorkflow.
 
 The library is the result of the master thesis:
-[Design of a Framework for Side-Channel-Attacks on RFID-Tags](http://itooktheredpill.dyndns.org/2010/side-channel-analysis-on-rfid-tags/)
+[Design of a Framework for Side-Channel-Attacks on RFID-Tags](https://itooktheredpill.irgendwo.org/2010/side-channel-analysis-on-rfid-tags/)
 which contains additional information regarding background and rationale.
 
 Key features
