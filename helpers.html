@@ -1,0 +1,407 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Correlation &#8212; dpa 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Preprocessor" href="preprocess.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="preprocess.html" title="Preprocessor"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dpa 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dpa.correlation">
+<span id="correlation"></span><h1>Correlation<a class="headerlink" href="#module-dpa.correlation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dpa.correlation.Correlator">
+<em class="property">class </em><code class="descclassname">dpa.correlation.</code><code class="descname">Correlator</code><span class="sig-paren">(</span><em>samples</em>, <em>traces</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.correlation.Correlator" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a new <a class="reference internal" href="#dpa.correlation.Correlator" title="dpa.correlation.Correlator"><code class="xref py py-class docutils literal"><span class="pre">Correlator</span></code></a> instance used to rapidly calculate
+correlations in a DPA scenario</p>
+<dl class="docutils">
+<dt><em>samples</em></dt>
+<dd>is the number of samples in each trace, i.e. the trace length</dd>
+<dt><em>traces</em></dt>
+<dd>is the total number of traces to be processed</dd>
+<dt><em>keys</em></dt>
+<dd>is the number of hypothesis</dd>
+</dl>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">Correlator</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#create a new correlator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">hypo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>           <span class="c1">#calculate a hypothesis for each trace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">hypo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">hypo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">preprocess</span><span class="p">()</span>          <span class="c1">#preprocess the hypothesis</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">preprocessor</span> <span class="k">import</span> <span class="n">buffer_from_list</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">30</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">15</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">update_matrix</span><span class="p">()</span>       <span class="c1">#calculate the correlation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">-0.5</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="dpa.correlation.Correlator.add_trace">
+<code class="descname">add_trace</code><span class="sig-paren">(</span><em>buf</em>, <em>idx=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.correlation.Correlator.add_trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>processes a trace (<a class="reference internal" href="preprocess.html#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">dpa.preprocessor.Buffer</span></code></a> buf) for the <a class="reference internal" href="#dpa.correlation.Correlator" title="dpa.correlation.Correlator"><code class="xref py py-class docutils literal"><span class="pre">Correlator</span></code></a> by updating
+intermediate values</p>
+<p>if <em>idx</em> is set, the trace will be added as trace number <em>idx</em> allowing
+to add traces in arbitrary order</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.correlation.Correlator.preprocess">
+<code class="descname">preprocess</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.correlation.Correlator.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><p>preprocesses the hypothesis. MUST be called before adding the first trace</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.correlation.Correlator.update_matrix">
+<code class="descname">update_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.correlation.Correlator.update_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>updates the correlation matrix. MUST be called before accessing the matrix</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.correlation.dump_matrix">
+<code class="descclassname">dpa.correlation.</code><code class="descname">dump_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.correlation.dump_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>dump a octave readable form of the <code class="xref py py-attr docutils literal"><span class="pre">Correlator.matrix</span></code> <em>m</em> to
+the file-descriptor <em>f</em>, assuming that <em>m</em> is a <em>keys</em> x <em>samples</em> matrix</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dpa.workflow">
+<span id="workflow"></span><h1>Workflow<a class="headerlink" href="#module-dpa.workflow" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dpa.workflow.DPAWorkflow">
+<em class="property">class </em><code class="descclassname">dpa.workflow.</code><code class="descname">DPAWorkflow</code><span class="sig-paren">(</span><em>info_dict={}</em>, <em>count=None</em>, <em>base_path='.'</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.workflow.DPAWorkflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper class for a complete trace analysis workflow</p>
+<p>Processes a set of traces in a series of analysis steps.
+Each step is executed by a trace processor. See the <a class="reference internal" href="#module-dpa.processors" title="dpa.processors"><code class="xref py py-mod docutils literal"><span class="pre">dpa.processors</span></code></a> module for details.</p>
+<p>In a profiling phase, 100 input traces will be processed sequentially to
+experimentally determine boundaries and lengths (e.g. for the 
+<a class="reference internal" href="#dpa.processors.AverageCountProcessor" title="dpa.processors.AverageCountProcessor"><code class="xref py py-class docutils literal"><span class="pre">dpa.processors.AverageCountProcessor</span></code></a>).
+This phase is necessary, because several processors require further information.
+For example, the <a class="reference internal" href="#dpa.processors.NormalizeProcessor" title="dpa.processors.NormalizeProcessor"><code class="xref py py-class docutils literal"><span class="pre">dpa.processors.NormalizeProcessor</span></code></a> needs information
+on the minimum and maximum of each trace. However, these values need to be
+constant for the whole set of traces as the output of the processor would
+otherwise be useless. Other processors like the peak-extraction processor
+need information on traces’ average and variance which typically do not vary
+much in a set of traces.
+Therefore, such information is pre-calculated using a couple of sample traces
+in a profiling phase. This functionality is supported by respective capabilities
+of the individual processor classes.</p>
+<p>The number of traces to profile can be set with the <em>profile_size</em> attribute.
+A record information dictionary can be passed to the module, which contains
+information to be used by the seperate processors, but the following keys are
+also used:</p>
+<dl class="docutils">
+<dt><em>errors</em></dt>
+<dd>a list of trace numbers to ignore. These traces will not be read or processed</dd>
+<dt><em>profile_traces</em></dt>
+<dd>a list of traces that are meant to be used for additional profiling if the
+initial 100 are not sufficient</dd>
+<dt><em>trace_type</em></dt>
+<dd>the data type of input traces. Default: <code class="xref py py-attr docutils literal"><span class="pre">dpa.preprocessor.types.uint8_t</span></code></dd>
+</dl>
+<p>In the actual processing phase the traces are processed in parallel using
+all available cores if the corresponding trace processors are implemented
+to release the GIL for the actual processing. This is the case for the
+preprocessing toolsuite including the correlator.</p>
+<p>See this source file for a more practical and thorough application of this class.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">DPAWorkflow</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">.</span><span class="n">processors</span> <span class="o">=</span> <span class="p">[</span><span class="n">TraceProcessor</span><span class="p">()]</span> <span class="c1"># the TraceProcessor() doesn&#39;t modify anything</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="dpa.workflow.DPAWorkflow.errors">
+<code class="descname">errors</code><em class="property"> = []</em><a class="headerlink" href="#dpa.workflow.DPAWorkflow.errors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dpa.workflow.DPAWorkflow.path_iter">
+<code class="descname">path_iter</code><span class="sig-paren">(</span><em>in_path</em>, <em>out_path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.workflow.DPAWorkflow.path_iter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dpa.workflow.DPAWorkflow.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.workflow.DPAWorkflow.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>processes the active trace set</p>
+<p>See <a class="reference internal" href="#dpa.workflow.DPAWorkflow" title="dpa.workflow.DPAWorkflow"><code class="xref py py-class docutils literal"><span class="pre">DPAWorkflow</span></code></a> for a generic overview of provided functionality.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dpa.workflow.DPAWorkflow.profile_size">
+<code class="descname">profile_size</code><em class="property"> = 100</em><a class="headerlink" href="#dpa.workflow.DPAWorkflow.profile_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="dpa.workflow.DPAWorkflow.store_avg">
+<code class="descname">store_avg</code><span class="sig-paren">(</span><em>avg</em>, <em>name=''</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.workflow.DPAWorkflow.store_avg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dpa.processors">
+<span id="processors"></span><h1>Processors<a class="headerlink" href="#module-dpa.processors" title="Permalink to this headline">¶</a></h1>
+<p>A collection of trace processors for use in a <a class="reference internal" href="#dpa.workflow.DPAWorkflow" title="dpa.workflow.DPAWorkflow"><code class="xref py py-class docutils literal"><span class="pre">dpa.workflow.DPAWorkflow</span></code></a>.</p>
+<p>A trace processor can be easily written by inheriting from <a class="reference internal" href="#dpa.processors.TraceProcessor" title="dpa.processors.TraceProcessor"><code class="xref py py-class docutils literal"><span class="pre">TraceProcessor</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">CustomProcessor</span><span class="p">(</span><span class="n">TraceProcessor</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">trace</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">custom_processing_function</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Further processors can be listed with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pydoc dpa.processors
+</pre></div>
+</div>
+<dl class="class">
+<dt id="dpa.processors.TraceProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">TraceProcessor</code><span class="sig-paren">(</span><em>dst_type=0</em>, <em>ref=None</em>, <em>save=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.TraceProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A no-op trace processor.</p>
+<p>This is a simple base class for other trace processors doing actual computations,
+that should inherit from this class and overwrite the <a class="reference internal" href="#dpa.processors.TraceProcessor.process" title="dpa.processors.TraceProcessor.process"><code class="xref py py-meth docutils literal"><span class="pre">process()</span></code></a> method.</p>
+<p>Trace processors can be chained:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">TraceProcessor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">TraceProcessor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>c.process(buf) is thus equivalent to a.process(b.process(buf))</p>
+<dl class="method">
+<dt id="dpa.processors.TraceProcessor.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>trace</em>, <em>idx=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.TraceProcessor.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>processes the <a class="reference internal" href="preprocess.html#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">dpa.preprocessor.Buffer</span></code></a> <em>trace</em> and returns the modified version</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.processors.TraceProcessor.profile">
+<code class="descname">profile</code><span class="sig-paren">(</span><em>trace</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.TraceProcessor.profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>performs profiling steps (such as finding min/max values) for the <a class="reference internal" href="preprocess.html#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">dpa.preprocessor.Buffer</span></code></a> <em>trace</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.processors.TraceProcessor.get_samples">
+<code class="descname">get_samples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.TraceProcessor.get_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the estimated number of samples of a output trace based on the profiling phase</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.processors.TraceProcessor.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.TraceProcessor.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>finishes pending tasks</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.CombinedProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">CombinedProcessor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.CombinedProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper class to provide the chaining functionality for a <a class="reference internal" href="#dpa.processors.TraceProcessor" title="dpa.processors.TraceProcessor"><code class="xref py py-class docutils literal"><span class="pre">TraceProcessor</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.RasterizeProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">RasterizeProcessor</code><span class="sig-paren">(</span><em>edge</em>, <em>period</em>, <em>trigger=150</em>, <em>pause_trigger=1100</em>, <em>min_pause=0</em>, <em>max_pause=0</em>, <em>header_size=128</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.RasterizeProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A processor for rasterization of traces. Please consult the thesis for
+an exact description.</p>
+<p>Uses a pattern defined by <a class="reference internal" href="preprocess.html#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">dpa.preprocessor.Buffer</span></code></a> <em>edge</em> to make each
+period the same length (<em>period</em>).</p>
+<p>Further options can be specified:</p>
+<dl class="docutils">
+<dt><em>trigger</em></dt>
+<dd>edge-comparism threshhold that starts search for a local minimum difference</dd>
+<dt><em>pause_trigger</em></dt>
+<dd>number of samples to pass without a trigger match, that causes indication
+for a data pause. This can be used to align the start of traces at
+pauses in the trace</dd>
+<dt><em>min_pause</em></dt>
+<dd>the minimum amount of pauses that MUST occur</dd>
+<dt><em>max_pause</em></dt>
+<dd>the maximum amount of pauses that are allowed to occur before assuming an error</dd>
+<dt><em>header_size</em></dt>
+<dd>number of samples to skip from the beginning of the trace</dd>
+</dl>
+<p>FIXME: there can only ever be one active configuration of this running at the same time</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.PeakProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">PeakProcessor</code><span class="sig-paren">(</span><em>break_length=0</em>, <em>break_count=0</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.PeakProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs peak extraction on the trace.</p>
+<p>Peak extraction needs information on average and variance of the trace.
+The values are determined in a profiling stage.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.RectifyProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">RectifyProcessor</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.RectifyProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rectifies a trace</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.NormalizeProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">NormalizeProcessor</code><span class="sig-paren">(</span><em>dst_type=0</em>, <em>ref=None</em>, <em>save=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.NormalizeProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalizes trace data globally to fit a smaller data type.</p>
+<p>This is useful if trace data does not fit a small data type without further processing.
+The <a class="reference internal" href="#dpa.processors.NormalizeProcessor" title="dpa.processors.NormalizeProcessor"><code class="xref py py-class docutils literal"><span class="pre">NormalizeProcessor</span></code></a> determines min and max values of the traces in a profiling stage
+and fits them into the new data type.</p>
+<p>A common application might be:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NormalizeProcessor</span><span class="p">(</span><span class="n">dst_type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.VoidProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">VoidProcessor</code><span class="sig-paren">(</span><em>dst_type=0</em>, <em>ref=None</em>, <em>save=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.VoidProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for processors not producing new traces</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.AverageCountProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">AverageCountProcessor</code><span class="sig-paren">(</span><em>callback=&lt;function &lt;lambda&gt;&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.AverageCountProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accumulates traces to create a average and variance trace</p>
+<p>Take an argument:</p>
+<dl class="docutils">
+<dt><em>callback</em></dt>
+<dd><p class="first">a function that is called after calculation of the average
+has been finished</p>
+<blockquote>
+<div>callback(avg, var, name)</div></blockquote>
+<p class="last">where <em>name</em> is the name of the referenced processor</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="dpa.processors.AverageCountProcessor.finalize">
+<code class="descname">finalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.AverageCountProcessor.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates the average and calls the <em>callback</em> function</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="dpa.processors.AverageCountProcessor.averagize">
+<em class="property">static </em><code class="descname">averagize</code><span class="sig-paren">(</span><em>processors</em>, <em>callback=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.AverageCountProcessor.averagize" title="Permalink to this definition">¶</a></dt>
+<dd><p>takes a list of processors and creates a AverageCountProcessor instance for each one</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.processors.CorrelationProcessor">
+<em class="property">class </em><code class="descclassname">dpa.processors.</code><code class="descname">CorrelationProcessor</code><span class="sig-paren">(</span><em>correlator=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.CorrelationProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds each processed trace to the correlation module</p>
+<dl class="docutils">
+<dt><em>correlator</em></dt>
+<dd>a <a class="reference internal" href="#dpa.correlation.Correlator" title="dpa.correlation.Correlator"><code class="xref py py-class docutils literal"><span class="pre">dpa.correlation.Correlator</span></code></a> instance that has already been
+initialized with hypothesis and preprocessed</dd>
+</dl>
+<dl class="method">
+<dt id="dpa.processors.CorrelationProcessor.correlations">
+<code class="descname">correlations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.processors.CorrelationProcessor.correlations" title="Permalink to this definition">¶</a></dt>
+<dd><p>retrieves the correlations after processing finished,
+by cutting the correlation matrix into corresponding chunks</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Correlation</a></li>
+<li><a class="reference internal" href="#module-dpa.workflow">Workflow</a></li>
+<li><a class="reference internal" href="#module-dpa.processors">Processors</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="preprocess.html"
+                        title="previous chapter">Preprocessor</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/helpers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="preprocess.html" title="Preprocessor"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dpa 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010, Hagen Fritsch.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>

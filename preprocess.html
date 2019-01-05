@@ -1,0 +1,363 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Preprocessor &#8212; dpa 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Correlation" href="helpers.html" />
+    <link rel="prev" title="Welcome to dpa’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="helpers.html" title="Correlation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to dpa’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dpa 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-dpa">
+<span id="preprocessor"></span><h1>Preprocessor<a class="headerlink" href="#module-dpa" title="Permalink to this headline">¶</a></h1>
+<p>The preprocessor provides a variety of functions to assist quick loading
+and processing of traces.
+A trace is represented by a <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">preprocessor.Buffer</span></code></a> with a certain data type and
+can be stored (<a class="reference internal" href="#dpa.preprocessor.write_file" title="dpa.preprocessor.write_file"><code class="xref py py-meth docutils literal"><span class="pre">preprocessor.write_file()</span></code></a>) or read (<a class="reference internal" href="#dpa.preprocessor.load_file" title="dpa.preprocessor.load_file"><code class="xref py py-meth docutils literal"><span class="pre">preprocessor.load_file()</span></code></a>)
+from files on the harddrive.</p>
+<p>The system has been designed to be more or less type-independent, allowing
+to process a trace of a certain type while outputing to another data type.
+This makes sense for example for the <a class="reference internal" href="#dpa.preprocessor.integrate" title="dpa.preprocessor.integrate"><code class="xref py py-meth docutils literal"><span class="pre">preprocessor.integrate()</span></code></a> function,
+that often produces values that are out of range of the source data type.
+Accordingly, the <a class="reference internal" href="#dpa.preprocessor.average" title="dpa.preprocessor.average"><code class="xref py py-meth docutils literal"><span class="pre">preprocessor.average()</span></code></a> function typically outputs floats,
+so a precission loss will occur unless a conversion is requested.
+Nearly all functions thus accept a <em>dst_type</em> parameter, that controls the output
+data type and defaults to zero and is then set to the same data type as
+the input data type.</p>
+<p>To see which types have been compiled into this module run:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pydoc dpa.preprocessor.types
+</pre></div>
+</div>
+<span class="target" id="module-dpa.preprocessor"></span><dl class="class">
+<dt id="dpa.preprocessor.AverageCounter">
+<em class="property">class </em><code class="descclassname">dpa.preprocessor.</code><code class="descname">AverageCounter</code><a class="headerlink" href="#dpa.preprocessor.AverageCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="#dpa.preprocessor.AverageCounter" title="dpa.preprocessor.AverageCounter"><code class="xref py py-class docutils literal"><span class="pre">AverageCounter</span></code></a> processes traces sequentially and calculates a
+average and variance trace based on the input traces.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">AverageCounter</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">avg</span><span class="p">,</span> <span class="n">var</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">get_buf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">avg</span>
+<span class="go">[1.0, 1.5, 2.0, 2.5, 3.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">var</span>
+<span class="go">[1.0, 0.25, 0.0, 0.25, 1.0]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="dpa.preprocessor.AverageCounter.get_buf">
+<code class="descname">get_buf</code><span class="sig-paren">(</span><em>) -&gt; (avg_buf</em>, <em>var_buf</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.AverageCounter.get_buf" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns one float buffer for <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> the average and
+one for the variance of all processed traces</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dpa.preprocessor.Buffer">
+<em class="property">class </em><code class="descclassname">dpa.preprocessor.</code><code class="descname">Buffer</code><a class="headerlink" href="#dpa.preprocessor.Buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a interface for wrapping and keeping track of native C buffers</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buf_a</span> <span class="o">=</span> <span class="n">new_buffer</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">int8_t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">buf_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">-1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf_b</span> <span class="o">=</span> <span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">float</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">,</span> <span class="mf">3.75</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">buf_b</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span>
+<span class="go">[1.5, 2.25, 3.75]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="dpa.preprocessor.Buffer.as_list">
+<code class="descname">as_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.Buffer.as_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list representation of the whole <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dpa.preprocessor.Buffer.zero">
+<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.Buffer.zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>fills the whole buffer with zeros</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.analyze">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">analyze</code><span class="sig-paren">(</span><em>buf</em>, <em>include_variance=True) -&gt; (average</em>, <em>variance</em>, <em>min</em>, <em>max</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates above characteristics for the <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf</p>
+<p>If <em>variance</em> is not needed, calculation is slightly quicker.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.average">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">average</code><span class="sig-paren">(</span><em>buf</em>, <em>n</em>, <em>skip=1</em>, <em>scale=1</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.average" title="Permalink to this definition">¶</a></dt>
+<dd><p>average <em>n</em> samples of <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> <em>buf</em>,
+the result is scaled by <em>scale</em></p>
+<p><em>skip</em> is a skip-divisor. i.e. skip=2 returns every 2nd result sample</p>
+<p>If <em>signed_scale</em> is set, a signed scale will be performed with the value
+<em>signed_scale</em> as the virtual zero (i.e. y = (x - signed_scale) * scale + signed_scale).
+A good value for <em>signed_scale</em> is thus the average of the trace.</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.buffer_from_list">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">buffer_from_list</code><span class="sig-paren">(</span><em>type</em>, <em>list</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.buffer_from_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>allocates a new <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> and fills its values with the ones found in <em>list</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.diff">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">diff</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>absolute=True</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates abs(a[i] - b[i]) for each sample of <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> <em>a</em> and <em>b</em>,
+returns a new <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> of length min(len(a), len(b))</p>
+<p>If the output <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> type is unsigned and <em>absolute</em> is not set
+the <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> will be shifted by max_{datatype}/2.</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.filter">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">filter</code><span class="sig-paren">(</span><em>buf</em>, <em>filter_data</em>, <em>scale=1</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>applies a FIR filter to the <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf</p>
+<p><em>filter_data</em> is a <code class="xref py py-attr docutils literal"><span class="pre">types.int8_t</span></code> <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> containing the filter coefficients,
+which are automatically scaled by 1/sum(filter_data)</p>
+<p>The result can be scaled by <em>scale</em>.</p>
+<p>If <em>signed_scale</em> is set, a signed scale will be performed with the value
+<em>signed_scale</em> as the virtual zero (i.e. y = (x - signed_scale) * scale + signed_scale).
+A good value for <em>signed_scale</em> is thus the average of the trace</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.free_buffer">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">free_buffer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.free_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>free_buffer(buf) – explicitly free an allocated <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a>. This is usually not needed!</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.integrate">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">integrate</code><span class="sig-paren">(</span><em>buf</em>, <em>n</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>builds the sum of <em>n</em> samples each</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.load_file">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">load_file</code><span class="sig-paren">(</span><em>filename</em>, <em>type</em>, <em>length=0</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.load_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>reads a file into memory returning a <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a></p>
+<p>a non-zero <em>length</em> specifies the maximum amounts of bytes read</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.new_buffer">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">new_buffer</code><span class="sig-paren">(</span><em>length</em>, <em>type</em>, <em>ptr=0</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.new_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>allocate a new <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> or generate one from an existing <em>ptr</em></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.normalize">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">normalize</code><span class="sig-paren">(</span><em>buf</em>, <em>min=NaN</em>, <em>max=NaN</em>, <em>adjust_factor=1.2</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>normalizes a trace with values in ]min, max[ to fit the whole range
+of the <em>dst_type</em></p>
+<p>If <em>min</em> and <em>max</em> are not set, they will be computed from the current trace
+with a border of <em>adjust_factor</em> (e.g. [0, 1] is adjusted to [-0.2, 1.2]).</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.peak_extract">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">peak_extract</code><span class="sig-paren">(</span><em>buf</em>, <em>avg=-1</em>, <em>std_dev=-1</em>, <em>break_count=0</em>, <em>break_length=0</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.peak_extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>extracts high peaks from <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf</p>
+<p>If <em>avg</em> and <em>std_dev</em> are not set they are calculated in an analysis phase first.</p>
+<dl class="docutils">
+<dt><em>break_count</em></dt>
+<dd><p class="first">specifies the number of pause at the beginning of the trace</p>
+<p class="last">If traces are not aligned in the time domain, but include a distinct pattern
+(i.e. a pause in signal), this can be used to align them.</p>
+</dd>
+<dt><em>break_length</em></dt>
+<dd>specifies the minimum length of each pause in samples</dd>
+</dl>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.raster">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">raster</code><span class="sig-paren">(</span><em>buf</em>, <em>edge</em>, <em>period</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.raster" title="Permalink to this definition">¶</a></dt>
+<dd><p>aligns a given trace buf using the pattern defined by <em>edge</em></p>
+<dl class="docutils">
+<dt><em>edge</em></dt>
+<dd>is a buffer of the same type as buf</dd>
+<dt><em>period</em></dt>
+<dd>specifies the length of a period in samples
+each <em>period</em> in <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf is linearly interpolated to fit the length specified by <em>period</em></dd>
+</dl>
+<p>See also <code class="xref py py-meth docutils literal"><span class="pre">raster_config()</span></code> to specify advanced attributes such as trigger_values
+and expected pause intervals.</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.rectify">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">rectify</code><span class="sig-paren">(</span><em>buf</em>, <em>avg</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.rectify" title="Permalink to this definition">¶</a></dt>
+<dd><p>rectifies a traces, by calculating the absolute difference to <em>avg</em></p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.reorder">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">reorder</code><span class="sig-paren">(</span><em>buf</em>, <em>period</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.reorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>reorders a rasterized <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf so that</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>period</em> buffers are created, each containing only one sample of each period
+i.e. the buffer contains only the first sample of each period and so on</li>
+<li>all buffers are concatenated again</li>
+</ul>
+</div></blockquote>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reorder</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">[1, 4, 7, 10, 2, 5, 8, 11, 3, 6, 9]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reorder</span><span class="p">(</span><span class="n">buffer_from_list</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">uint8_t</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">[1, 4, 7, 10, 2, 5, 8, 3, 6, 9]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.scale">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">scale</code><span class="sig-paren">(</span><em>buf</em>, <em>scale=1.0</em>, <em>signed_scale=0</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>scales buffers values by <em>scale</em> (i.e. buf[i] <a href="#id1"><span class="problematic" id="id2">*</span></a>= scale)</p>
+<p>If <em>signed_scale</em> is set, a signed scale will be performed with the value
+<em>signed_scale</em> as the virtual zero (i.e. y = (x - signed_scale) * scale + signed_scale).
+A good value for <em>signed_scale</em> is thus the average of the trace.</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.spline">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">spline</code><span class="sig-paren">(</span><em>buf</em>, <em>target_size</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.spline" title="Permalink to this definition">¶</a></dt>
+<dd><p>linearly interpolates a <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf to fit a given length</p>
+<p>For reasons of efficiency this does not do averaging, if <em>size</em> is
+significantly smaller than <em>buf</em>’s size.</p>
+<p>spline interpolation is not yet implemented</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.square">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">square</code><span class="sig-paren">(</span><em>buf</em>, <em>dst_type=types.void</em><span class="sig-paren">)</span> &#x2192; :class:`Buffer`<a class="headerlink" href="#dpa.preprocessor.square" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculates the square of each value in <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> buf</p>
+<p>By explicitly specifying a <em>dst_type</em> the result <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> is forced to this type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dpa.preprocessor.write_file">
+<code class="descclassname">dpa.preprocessor.</code><code class="descname">write_file</code><span class="sig-paren">(</span><em>filename</em>, <em>buf</em>, <em>length=0</em><span class="sig-paren">)</span><a class="headerlink" href="#dpa.preprocessor.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>dumps the <a class="reference internal" href="#dpa.preprocessor.Buffer" title="dpa.preprocessor.Buffer"><code class="xref py py-class docutils literal"><span class="pre">Buffer</span></code></a> <em>buf</em> to a file</p>
+<p>a non-zero <em>length</em> specifies the maximum amounts of bytes written</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to dpa’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="helpers.html"
+                        title="next chapter">Correlation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/preprocess.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="helpers.html" title="Correlation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to dpa’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dpa 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2010, Hagen Fritsch.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.4.
+    </div>
+  </body>
+</html>
