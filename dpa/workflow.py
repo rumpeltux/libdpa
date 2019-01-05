@@ -1,6 +1,6 @@
+#-*- coding: utf-8
 # Author: Hagen Fritsch, 2010
 # Licensed under the terms of the GNU-GPL-3.0
-#-*- coding: utf-8
 
 import math
 from helpers import *

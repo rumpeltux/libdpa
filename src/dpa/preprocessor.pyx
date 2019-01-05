@@ -52,7 +52,8 @@ def average(Buffer buf, int n, int skip=1, double scale=1, int signed_scale=0, i
 	if dst_type == 0:
 		dst_type = buf.type
 	cdef Buffer out = new_buffer(l, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
+	
 	with nogil:
 		fkt.average_filter(out.buf, buf.buf, buf.length, n, skip, scale, signed_scale)
 	return out
@@ -69,9 +70,10 @@ def load_file(filename, int type, size_t length=0):
 		length = os.stat(filename).st_size / (type & 0xf)
 
 	cdef Buffer out = new_buffer(length, type)
-	fkt = mod[T(type)]
+	cdef _F fkt = mod[T(type)]
+	cdef char* cfilename = filename
 	with nogil:
-		ret = fkt.load_buf(filename, out.buf, out.length)
+		ret = fkt.load_buf(cfilename, out.buf, out.length)
 	if ret == 0:
 		print "load %s failed" % filename
 		return None
@@ -88,10 +90,11 @@ def write_file(filename, Buffer buf, size_t length=0):
 	"""
 	if length == 0:
 		length = buf.length
-	fkt = mod[T(buf.type)]
+	cdef _F fkt = mod[T(buf.type)]
 	cdef int ret
+	cdef char* cfilename = filename
 	with nogil:
-		ret = fkt.write_buf(filename, buf.buf, length)
+		ret = fkt.write_buf(cfilename, buf.buf, length)
 	return ret
 
 def filter(Buffer buf, Buffer filter_data, double scale=1, int signed_scale=0, int dst_type=0):
@@ -118,7 +121,7 @@ def filter(Buffer buf, Buffer filter_data, double scale=1, int signed_scale=0, i
 
 	cdef size_t length = buf.length - filter_data.length + 1
 	cdef Buffer out = new_buffer(length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.apply_filter(out.buf, buf.buf, buf.length, <int8_t *>filter_data.buf, filter_data.length, scale, signed_scale)
 	return out
@@ -139,7 +142,7 @@ def scale(Buffer buf, double scale=1.0, int signed_scale=0, int dst_type=0):
 		dst_type = buf.type
 
 	cdef Buffer out = new_buffer(buf.length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.scale(buf.length, out.buf, buf.buf, signed_scale, scale)
 	return out
@@ -155,7 +158,7 @@ def analyze(Buffer buf, int include_variance=True):
 	cdef double avg, var=0, _min, _max
 	cdef double * p_var = &var
 	if not include_variance: p_var = NULL
-	fkt = mod[T(buf.type)]
+	cdef _F fkt = mod[T(buf.type)]
 	with nogil:
 		fkt.analyze(buf.buf, buf.length, &avg, p_var, &_min, &_max)
 	return (avg, var, _min, _max)
@@ -187,7 +190,7 @@ def peak_extract(Buffer buf, double avg=-1, double std_dev=-1, size_t break_coun
 
 	cdef size_t length = buf.length * 11 / 10 / 4 #l / 4 * 1.1
 	cdef Buffer out = new_buffer(length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		r_size = fkt.peak_extract(out.buf, buf.buf, buf.length, avg, std_dev, break_length, break_count)
 	if r_size > length: #this is unlikely. if it happens, fix above calculation
@@ -249,7 +252,7 @@ def raster(Buffer buf, Buffer edge, int period, int dst_type=0):
 	cdef size_t length = int(buf.length * 1.2 + 4 * 1024) #reserve some 20% additional space, raise exception later if we fail
 	cdef Buffer out = new_buffer(length, dst_type)
 	cdef int ret
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		ret = fkt.raster(out.buf, buf.buf, buf.length, &out.length, period, edge.buf, edge.length)
 	if ret < 0:
@@ -270,7 +273,7 @@ def rectify(Buffer buf, double avg, int dst_type=0):
 		dst_type = buf.type
 
 	cdef Buffer out = new_buffer(buf.length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.rectify(out.buf, buf.buf, buf.length, avg)
 	return out
@@ -296,7 +299,7 @@ def reorder(Buffer buf, size_t period, int dst_type=0):
 		dst_type = buf.type
 
 	cdef Buffer out = new_buffer(buf.length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.reorder(out.buf, buf.buf, buf.length, period)
 	return out
@@ -320,7 +323,7 @@ def diff(Buffer a, Buffer b, int absolute=True, int dst_type=0):
 
 	cdef int length = min(a.length, b.length)
 	cdef Buffer out = new_buffer(length, dst_type)
-	fkt = mod[T(dst_type, a.type)]
+	cdef _F fkt = mod[T(dst_type, a.type)]
 	with nogil:
 		fkt.diff(length, out.buf, a.buf, b.buf, absolute)
 	return out
@@ -337,7 +340,7 @@ def square(Buffer buf, int dst_type=0):
 		dst_type = buf.type
 
 	cdef Buffer out = new_buffer(buf.length, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.square_buf(out.buf, buf.buf, buf.length)
 	return out
@@ -354,7 +357,7 @@ def integrate(Buffer buf, int n, int dst_type=0):
 		dst_type = buf.type
 
 	cdef Buffer out = new_buffer(buf.length - n + 1, dst_type)
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.integrate(out.buf, buf.buf, buf.length, n)
 	return out
@@ -386,7 +389,7 @@ def normalize(Buffer buf, double min=-1, double max=-1, double adjust_factor=1.2
 
 	cdef Buffer out = new_buffer(buf.length, dst_type)
 	cdef int ret
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		ret = fkt.normalize(out.buf, buf.buf, buf.length, min, max)
 	if ret != 1:
@@ -402,7 +405,7 @@ def fft_filter(Buffer buf, int start, int stop, dst_type=0):
 	cdef double scale = 1
 	cdef double offset = 0
 
-	fkt = mod[T(dst_type, buf.type)]
+	cdef _F fkt = mod[T(dst_type, buf.type)]
 	with nogil:
 		fkt.fft_filter(out.buf, buf.buf, buf.length, start, stop, &scale, &offset)
 	return out
@@ -459,10 +462,10 @@ cdef class AverageCounter:
 			raise Exception("cannot force a buffer to be longer than it is")
 		if length != self.out_sum.length:
 			warn("processing incomplete trace, this may derange the result")
-		module = mod[T(self.out_sum.type, buf.type)]
+		cdef _F fkt = mod[T(self.out_sum.type, buf.type)]
 		self.lock.acquire()
 		with nogil:
-			module.add_average(self.out_sum.buf if self.generate_variance else NULL, self.out_square_sum.buf, buf.buf, length)
+			fkt.add_average(self.out_sum.buf if self.generate_variance else NULL, self.out_square_sum.buf, buf.buf, length)
 		self.lock.release()
 		self.count += 1
 
