@@ -1,5 +1,11 @@
-libdpa
-======
+# Update (2019)
+Most of this projects functionality can today be achieved with numpy & scipy.
+However, you may still find some features useful or more convenient.
+Note that this project is not actively maintained and kept here for archival
+purposes mostly.
+
+libdpa (2010)
+=============
 
 libdpa is a python library for analysis tasks in differential power analysis
 scenarios. It assists in the initial analysis by providing simple access to
@@ -40,6 +46,10 @@ To install the library run:
 To use the library without installation:
 
     export PYTHONPATH="$PYTHONPATH:`pwd`/`echo build/lib*`"
+
+Documentation
+=============
+Please go to http://rumpeltux.github.io/libdpa/
 
 License
 =======
